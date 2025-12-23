@@ -1,0 +1,84 @@
+/* Hero Section */
+.hero-section {
+    opacity: 1;
+    transform: translateY(50px);
+    transition: all 0.8s ease-out;
+}
+.hero-section.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Map Section */
+.map-container {
+    padding: 2rem 0;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s ease-out;
+    position: relative;
+}
+.map-container.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#map {
+    height: 80vh;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.leaflet-popup-content { font-family: 'ALK life', sans-serif; }
+
+/* Floating Add Place Button */
+.add-place-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.6s ease-out;
+}
+.add-place-btn.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card-img-top{
+height: 200px;
+object-fit: cover;
+object-position: center;
+}
+
+.map-container .container {
+position: relative;
+}
+
+.add-place-btn {
+position: absolute;
+top: -3.2rem;
+right: 130px !important;
+z-index: 1000;
+opacity: 0;
+transform: translateY(-20px);
+transition: all 0.6s ease-out;
+height: 44px;
+width: 320px;
+border-radius: 30px;
+}
+
+.add-place-btn.show {
+opacity: 1;
+transform: translateY(0);
+}
+
+#map {
+height: 80vh;
+width: 100%;
+border-radius: 10px;
+box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+

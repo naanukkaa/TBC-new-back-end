@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenSpots — Contact</title>
+    <meta name="description" content="Contact GreenSpots to share feedback or ask questions.">
+    <meta name="keywords" content="Georgia tourism, contact, feedback, travel">
+
+    <!-- Bootstrap CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../src/css/reset.css">
+    <link rel="stylesheet" href="../src/css/index.css">
+    <link rel="stylesheet" href="../src/css/dashboard.css">
+    <link rel="icon" type="image/x-icon" href="../src/img/logo.png">
+</head>
+
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-greenspots fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="index2.html">
+            <div class="brand-icon"><img src="../src/img/logo.png" alt="logo" width="30" height="30"></div>
+            GreenSpots
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="categories.html">კატეგორიები</a></li>
+                <li class="nav-item"><a class="nav-link" href="booking.html">დაჯავშვნა</a></li>
+                <li class="nav-item"><a class="nav-link" href="map.html">რუკა</a></li>
+                <li class="nav-item"><a class="nav-link" href="contact.html">კონტაქტი</a></li>
+            </ul>
+            <div class="d-flex gap-2">
+                <a href="profile.html"><button class="btn btn-outline-green">პროფილი</button></a>
+                <a href="../index.html"><button class="btn btn-primary-green">გამოსვლა</button></a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section py-5 mt-5 text-center bg-light">
+    <div class="container">
+        <h1 class="hero-title mb-3">დაგვიკავშირდით</h1>
+        <p class="hero-slogan-georgian mb-0">გაგზავნეთ შეტყობინება ან მიიღეთ დახმარება ჩვენი გუნდისგან</p>
+    </div>
+</section>
+
+<!-- Contact Form Section -->
+<section class="contact-form-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <h2 class="text-center mb-4">გაგზავნე შეტყობინება</h2>
+                <form class="shadow-sm p-4 rounded-3 bg-white">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="სახელი" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" placeholder="ელ. ფოსტა" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="თემა" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" rows="5" placeholder="შეტყობინება" required></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary-green w-50">გაგზავნა</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Info Section -->
+<section class="contact-info py-5 bg-light mb-4">
+    <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <i class="bi bi-geo-alt fs-2 mb-2"></i>
+                <p>თბილისი, საქართველო</p>
+            </div>
+            <div class="col-md-4">
+                <i class="bi bi-telephone fs-2 mb-2"></i>
+                <p>+995 123 456 789</p>
+            </div>
+            <div class="col-md-4">
+                <i class="bi bi-envelope fs-2 mb-2"></i>
+                <p>info@greenspots.ge</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="map-section py-5 mb-4">
+    <div class="container">
+        <h2 class="mb-4 text-center">ჩვენი ლოკაცია</h2>
+        <div class="map-container rounded-3 shadow-sm overflow-hidden">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3037.123456!2d44.787!3d41.715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x404473f6!2sTbilisi!5e0!3m2!1ska!2sge!4v1234567890" 
+                width="100%" 
+                height="400" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </div>
+</section>
+
+    <!-- Footer (unchanged) -->
+<footer id="about">
+    <div class="footer-cta">
+        <div class="container">
+            <h2>იცით ფარული ადგილი?</h2>
+            <p>გაუზიარეთ თქვენი აღმოჩენები საზოგადოებას. დაეხმარეთ მოგზაურებს, განიცადონ ნამდვილი საქართველო.</p>
+            <button class="btn btn-accent">
+                <i class="bi bi-geo-alt me-2"></i>
+                დაამატეთ თქვენი ადგილი
+            </button>
+        </div>
+    </div>
+
+    <div class="footer-main">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 mb-4 mb-lg-0">
+                    <a href="#" class="footer-brand">
+                        <div class="brand-icon">
+                            <img src="../src/img/logo.png" alt="logo" width="30" height="30">
+                        </div>
+                        GreenSpots
+                    </a>
+                    <p class="footer-description">საზოგადოებაზე ორიენტირებული პლატფორმა საქართველოს ულამაზესი ბუნებრივი და ისტორიული ადგილების აღმოსაჩენად. შექმნილია მოგზაურების მიერ, მოგზაურებისთვის.</p>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/_nanuukkaa_/" class="social-link"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.facebook.com/nanu.kupreishvili" class="social-link"><i class="bi bi-facebook"></i></a>
+                        <a href="https://tbcbank.ge/ka/tbc-education" class="social-link"><img src="../src/img/tbc-logo.png" alt="logo" width="20" height="20"></a>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-2 offset-lg-2">
+                    <h4 class="footer-title">აღმოაჩინე</h4>
+                    <ul class="footer-links">
+                        <li><a href="categories.html">კატეგორიები</a></li>
+                        <li><a href="booking.html">დაჯავშვნა</a></li>
+                        <li><a href="map.html">ინტერაქტიული რუკა</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <h4 class="footer-title">საზოგადოება</h4>
+                    <ul class="footer-links">
+                        <li><a href="about.html">ჩვენს შესახებ</a></li>
+                        <li><a href="contact.html">კონტაქტი</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                <p>© 2025 GreenSpots. ყველა უფლება დაცულია.</p>
+                <div class="d-flex gap-4">
+                    <a href="#">კონფიდენციალურობის პოლიტიკა</a>
+                    <a href="#">მომსახურების პირობები</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
