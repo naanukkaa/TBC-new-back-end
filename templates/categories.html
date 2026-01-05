@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}კატეგორიები — GreenSpots{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/categories.css') }}">
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo.png') }}">
+<style>
+.filter-section{
+    display : block;
+    }
+.d-inline-block{
+display: flex !important;
+}
+
+.category-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+.category-card:hover {
+    transform: scale(1.05);
+}
+.card-img-top {
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px 6px 0 0;
+}
+.filter-section {
+    margin-top: 60px;
+    margin-bottom: 30px;
+}
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    }
+.form-control{
+    width: 800px;
+    margin-right: 20px;
+}
+.filter-form .form-control, .filter-form select {
+max-width: 1500px;
+}
+
+.filter-form .form-control,
+.filter-form select {
+    flex: 1 1 300px;        /* grow, min-width 300px */
+    max-width: 800px;
+    min-width: 150px;
+}
+
+@media (max-width: 769px) {
+    .filter-form {
+        flex-direction: column; /* stack vertically */
+        align-items: stretch;
+    }
+    .filter-form .form-control,
+    .filter-form select,
+    .filter-form button {
+        width: 100% !important;
+        margin: 0;
+    }
+
+    .form-control{
+        width: 350px;
+    }
+}
+
+@media (max-width: 426px) {
+    .form-control{
+        width: 50px;
+    }
+    .filter-section {
+        display: flex;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="filter-section py-5">
+    <div class="container text-center">
+
+        <!-- SEARCH FORM -->
+        <form method="get" class="filter-form mb-3">
+            <input type="hidden" name="category" value="">
+            <input type="text" name="q" class="form-control" placeholder="ძებნა ადგილების მიხედვით…" value="{{ search_query }}">
+            <button type="submit" class="btn btn-accent btn-search"><i class="bi bi-search"></i> ძებნა</button>
+        </form>
+
+        <!-- ADD PLACE BUTTON -->
+        <a href="{{ url_for('add_place') }}" class="btn btn-success btn-add-place">
+            <i class="bi bi-geo-alt me-2"></i>დაამატე ადგილი
+        </a>
+    </div>
+</section>
+
+
+
+<!-- PLACES CARDS -->
+<section class="categories-section">
+    <div class="container">
+        <div class="row g-4">
+            {% if places %}
+                {% for place in places %}
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <a href="{{ url_for('place_detail', place_id=place.id) }}" class="text-decoration-none text-dark">
+                            <div class="card category-card h-100 shadow-sm">
+                                {% if place.image %}
+                                    <img src="{{ url_for('static', filename='uploads/' ~ place.image) }}" class="card-img-top" alt="{{ place.name }}">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='img/default-place.jpg') }}" class="card-img-top" alt="{{ place.name }}">
+                                {% endif %}
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">{{ place.name }}</h5>
+                                    <p class="card-text">{{ place.description[:60] }}{% if place.description|length > 60 %}...{% endif %}</p>
+                                    <p class="text-muted">{{ place.region }}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">ცარიელი შედეგი…</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

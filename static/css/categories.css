@@ -1,0 +1,128 @@
+/* --- Filter Section --- */
+.filter-section {
+    margin-top: 60px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* --- Filter Form --- */
+.filter-form {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 800px;
+    margin: 0 auto 10px auto;
+}
+
+/* Search Bar Input Only */
+.filter-form .form-control {
+    height: 70px;           /* fixed height */
+    padding: 0 15px;        /* horizontal padding */
+    font-size: 1rem;
+    flex: 1 1 300px;
+    min-width: 200px;
+    max-width: 600px;
+}
+
+/* Search Button */
+.filter-form button.btn-search {
+    flex: 0 0 auto;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    height: auto;           /* keep button default height */
+}
+
+/* Add Place Button Below Search */
+.btn-add-place {
+    display: inline-block;
+    margin: 10px auto 0 auto; /* below search bar, centered */
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+}
+
+/* --- Category Cards --- */
+.category-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.category-card:hover {
+    transform: scale(1.05);
+}
+
+.card-img-top {
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px 6px 0 0;
+}
+
+/* --- Responsive: Tablet / Medium Screens --- */
+@media (max-width: 769px) {
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-form .form-control,
+    .filter-form button.btn-search {
+        width: 100% !important;
+        margin: 0;
+    }
+
+    .btn-add-place {
+        width: 60%;
+        max-width: 300px;
+    }
+
+    .card-img-top {
+        height: 140px;
+    }
+}
+
+/* --- Responsive: Mobile Screens --- */
+@media (max-width: 425px) {
+    .filter-form {
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .filter-form .form-control {
+        width: 100% !important;
+        height: 70px; /* keep same height on mobile */
+        font-size: 14px;
+    }
+
+    .filter-form button.btn-search {
+        width: 50%;
+        font-size: 12px;
+        padding: 0.3rem 0.5rem;
+        margin: 0 auto;
+    }
+
+    .btn-add-place {
+        width: 100%;
+        font-size: 13px;
+        margin-top: 8px;
+    }
+
+    .card-img-top {
+        height: 120px;
+    }
+}
+
+/* --- Cards on Small Screens --- */
+@media (max-width: 576px) {
+    .col-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}

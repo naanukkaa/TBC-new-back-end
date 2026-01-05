@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenSpots — რეგისტრაცია</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo.png') }}">
+    <style>
+
+        .auth-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Left form panel */
+        .auth-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            background-color: #f5f5f5;
+        }
+
+        .auth-left h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #2b9348;
+        }
+
+        .auth-left p {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            color: #555;
+        }
+
+        .auth-left form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .auth-left .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .auth-left .form-group input {
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .auth-left button {
+            padding: 12px;
+            font-size: 1rem;
+            background-color: #2b9348;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .auth-left button:hover {
+            background-color: #2b9348;
+        }
+
+        .auth-left .auth-switch {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #2c7a7b;
+            text-decoration: none;
+        }
+
+        #password-requirements {
+        list-style: none;
+        padding-left: 0;
+        font-size: 0.85rem;
+        }
+        #password-requirements li.invalid {
+            color: gray;
+        }
+        #password-requirements li.valid {
+            color: green;
+            font-weight: bold;
+        }
+
+        /* Right image panel */
+        .auth-right {
+            flex: 1;
+            background-image: url('{{ url_for('static', filename='img/register.jpg') }}');
+            background-size: cover;
+            background-position: center;
+        }
+
+        @media (max-width: 900px) {
+            .auth-container {
+                flex-direction: column;
+            }
+            .auth-left, .auth-right {
+                flex: unset;
+                height: 50vh;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="auth-left">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <div class="container mt-3">
+                  {% for message in messages %}
+                    <div class="alert alert-info">{{ message }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+            <h2>რეგისტრაცია</h2>
+            <p>შექმენი ანგარიში და აღმოაჩინე საქართველო ჩვენს გვერდით 🌿</p>
+
+            <form method="POST" class="auth-form">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    {{ form.username.label }}
+                    {{ form.username(class="form-control", placeholder="Username") }}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label }}
+                    {{ form.email(class="form-control", placeholder="example@email.com") }}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label }}
+                    {{ form.password(class="form-control", id="password", placeholder="••••••••") }}
+                    <ul id="password-requirements">
+                        <li id="length" class="invalid">At least 8 characters</li>
+                        <li id="uppercase" class="invalid">At least 1 uppercase letter</li>
+                        <li id="number" class="invalid">At least 1 number</li>
+                        <li id="special" class="invalid">At least 1 special character (!@#$%^&*)</li>
+                    </ul>
+                </div>
+                <div class="form-group">
+                    {{ form.confirm_password.label }}
+                    {{ form.confirm_password(class="form-control", placeholder="••••••••") }}
+                </div>
+                <button type="submit">რეგისტრაცია</button>
+            </form>
+
+            <a href="{{ url_for('auth_bp.login') }}" class="auth-switch">
+                გაქვს ანგარიში? <strong>შესვლა</strong>
+            </a>
+        </div>
+        <div class="auth-right"></div>
+
+    </div>
+
+    {% include "footer.html" %}
+
+    {%block scripts%}
+    <script>
+    const passwordInput = document.getElementById("password");
+    const lengthReq = document.getElementById("length");
+    const upperReq = document.getElementById("uppercase");
+    const numberReq = document.getElementById("number");
+    const specialReq = document.getElementById("special");
+
+    passwordInput.addEventListener("input", () => {
+        const val = passwordInput.value;
+
+        // Length check
+        lengthReq.className = val.length >= 8 ? "valid" : "invalid";
+
+        // Uppercase check
+        upperReq.className = /[A-Z]/.test(val) ? "valid" : "invalid";
+
+        // Number check
+        numberReq.className = /[0-9]/.test(val) ? "valid" : "invalid";
+
+        // Special character check
+        specialReq.className = /[!@#$%^&*]/.test(val) ? "valid" : "invalid";
+    });
+    </script>
+    {%endblock%}
+</body>
+</html>
