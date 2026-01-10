@@ -7,102 +7,60 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/categories.css') }}">
 <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo.png') }}">
-<style>
-.filter-section{
-    display : block;
-    }
-.d-inline-block{
-display: flex !important;
-}
-
-.category-card {
-    cursor: pointer;
-    transition: transform 0.2s;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-}
-.category-card:hover {
-    transform: scale(1.05);
-}
-.card-img-top {
-    height: 150px;
-    object-fit: cover;
-    border-radius: 6px 6px 0 0;
-}
-.filter-section {
-    margin-top: 60px;
-    margin-bottom: 30px;
-}
-.filter-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    }
-.form-control{
-    width: 800px;
-    margin-right: 20px;
-}
-.filter-form .form-control, .filter-form select {
-max-width: 1500px;
-}
-
-.filter-form .form-control,
-.filter-form select {
-    flex: 1 1 300px;        /* grow, min-width 300px */
-    max-width: 800px;
-    min-width: 150px;
-}
-
-@media (max-width: 769px) {
-    .filter-form {
-        flex-direction: column; /* stack vertically */
-        align-items: stretch;
-    }
-    .filter-form .form-control,
-    .filter-form select,
-    .filter-form button {
-        width: 100% !important;
-        margin: 0;
-    }
-
-    .form-control{
-        width: 350px;
-    }
-}
-
-@media (max-width: 426px) {
-    .form-control{
-        width: 50px;
-    }
-    .filter-section {
-        display: flex;
-    }
-</style>
 {% endblock %}
 
 {% block content %}
+<section class="filter-section">
+    <div class="filter-container">
 
-<section class="filter-section py-5">
-    <div class="container text-center">
+        <!-- Filter button -->
+        <div class="filter-dropdown">
+            <button class="btn-filter" id="filter-toggle">
+                <i class="bi bi-funnel"></i> ფილტრი
+            </button>
 
-        <!-- SEARCH FORM -->
-        <form method="get" class="filter-form mb-3">
-            <input type="hidden" name="category" value="">
-            <input type="text" name="q" class="form-control" placeholder="ძებნა ადგილების მიხედვით…" value="{{ search_query }}">
-            <button type="submit" class="btn btn-accent btn-search"><i class="bi bi-search"></i> ძებნა</button>
-        </form>
+            <!-- Hidden panel -->
+            <div class="filter-panel">
+                <form class="filter-form" method="get">
+                    <select name="region" class="filter-item">
+                        <option value="">ყველა რეგიონი</option>
+                        {% for code, name in regions_list %}
+                        <option value="{{ code }}" {% if selected_region == code %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
 
-        <!-- ADD PLACE BUTTON -->
-        <a href="{{ url_for('add_place') }}" class="btn btn-success btn-add-place">
-            <i class="bi bi-geo-alt me-2"></i>დაამატე ადგილი
-        </a>
+                    <select name="rating" class="filter-item">
+                        <option value="">ყველა შეფასება</option>
+                        <option value="5" {% if min_rating == '5' %}selected{% endif %}>5 ვარსკვლავი</option>
+                        <option value="4" {% if min_rating == '4' %}selected{% endif %}>4 ვარსკვლავი და მეტი</option>
+                        <option value="3" {% if min_rating == '3' %}selected{% endif %}>3 ვარსკვლავი და მეტი</option>
+                        <option value="2" {% if min_rating == '2' %}selected{% endif %}>2 ვარსკვლავი და მეტი</option>
+                        <option value="1" {% if min_rating == '1' %}selected{% endif %}>1 ვარსკვლავი და მეტი</option>
+                    </select>
+
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" name="favorites_only" id="favorites_only" {% if favorites_only == 'on' %}checked{% endif %}>
+                        <label for="favorites_only">მხოლოდ ფავორიტები</label>
+                    </div>
+
+                    <button type="submit" class="btn-submit">გაფილტვრა</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Search + Add Place -->
+        <div class="search-add-wrapper">
+            <form class="search-form">
+                <input type="text" name="q" class="search-input" placeholder="ძებნა ადგილების მიხედვით…" value="{{ search_query }}">
+                <button type="submit" class="btn-search"><i class="bi bi-search"></i> ძებნა</button>
+            </form>
+            <a href="{{ url_for('add_place') }}" class="btn-add-place">
+                <i class="bi bi-geo-alt"></i> დაამატე ადგილი
+            </a>
+        </div>
+
     </div>
 </section>
-
-
 
 <!-- PLACES CARDS -->
 <section class="categories-section">
@@ -122,6 +80,25 @@ max-width: 1500px;
                                     <h5 class="card-title">{{ place.name }}</h5>
                                     <p class="card-text">{{ place.description[:60] }}{% if place.description|length > 60 %}...{% endif %}</p>
                                     <p class="text-muted">{{ place.region }}</p>
+                                    <p class="mb-0">
+                                        {% set full_stars = place.avg_rating|int %}
+                                        {% set half_star = 1 if (place.avg_rating - full_stars) >= 0.5 else 0 %}
+                                        {% set empty_stars = 5 - full_stars - half_star %}
+
+                                        {% for i in range(full_stars) %}
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        {% endfor %}
+
+                                        {% if half_star %}
+                                            <i class="bi bi-star-half text-warning"></i>
+                                        {% endif %}
+
+                                        {% for i in range(empty_stars) %}
+                                            <i class="bi bi-star text-warning"></i>
+                                        {% endfor %}
+
+                                        ({{ '%.1f' % place.avg_rating }})
+                                    </p>
                                 </div>
                             </div>
                         </a>
@@ -135,6 +112,26 @@ max-width: 1500px;
         </div>
     </div>
 </section>
-
-
 {% endblock %}
+
+{% block js %}
+<script>
+const toggleBtn = document.getElementById("filter-toggle");
+const filterPanel = document.querySelector(".filter-panel");
+
+toggleBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    filterPanel.classList.toggle("show");
+});
+
+// Close when clicking outside
+document.addEventListener("click", (e) => {
+    if (!filterPanel.contains(e.target) && e.target !== toggleBtn) {
+        filterPanel.classList.remove("show");
+    }
+});
+
+</script>
+{% endblock %}
+
+

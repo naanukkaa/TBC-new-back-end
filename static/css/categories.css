@@ -1,3 +1,6 @@
+*{
+    text-decoration: none !important;
+}
 /* --- Filter Section --- */
 .filter-section {
     margin-top: 60px;
@@ -5,40 +8,122 @@
     text-align: center;
 }
 
-/* --- Filter Form --- */
+/* --- Container --- */
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 15px;
+}
+
+/* --- Filter Button & Panel --- */
+.btn-filter {
+    background-color: #ffc107;
+    color: #000;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+}
+
+/* Filter panel overlay */
+.filter-panel {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    min-width: 250px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Show dropdown */
+.filter-panel.show {
+    display: flex;
+}
+
+/* --- Filter form --- */
 .filter-form {
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.filter-item {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-submit {
+    background-color: #ffc107;
+    color: #000;
+    border: none;
+    padding: 10px 0;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* --- Search + Add Place --- */
+.search-add-wrapper {
+    display: flex;
     gap: 10px;
-    max-width: 800px;
-    margin: 0 auto 10px auto;
+    flex-wrap: wrap;
+    align-items: top !important;
 }
 
-/* Search Bar Input Only */
-.filter-form .form-control {
-    height: 70px;           /* fixed height */
-    padding: 0 15px;        /* horizontal padding */
-    font-size: 1rem;
-    flex: 1 1 300px;
-    min-width: 200px;
-    max-width: 600px;
+.search-form {
+    display: flex;
+    gap: 10px;
+    flex: 1;
 }
 
-/* Search Button */
-.filter-form button.btn-search {
-    flex: 0 0 auto;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
-    height: auto;           /* keep button default height */
+.search-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    width: 728px;
 }
 
-/* Add Place Button Below Search */
+.btn-search {
+    background-color: #0d6efd;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
 .btn-add-place {
-    display: inline-block;
-    margin: 10px auto 0 auto; /* below search bar, centered */
-    padding: 0.6rem 1.5rem;
-    font-size: 1rem;
+    background-color: #198754;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
 /* --- Category Cards --- */
@@ -59,31 +144,66 @@
     border-radius: 6px 6px 0 0;
 }
 
-/* --- Responsive: Tablet / Medium Screens --- */
-@media (max-width: 769px) {
-    .filter-form {
-        flex-direction: column;
-        align-items: stretch;
-    }
 
-    .filter-form .form-control,
-    .filter-form button.btn-search {
-        width: 100% !important;
-        margin: 0;
-    }
-
-    .btn-add-place {
-        width: 60%;
-        max-width: 300px;
-    }
-
-    .card-img-top {
-        height: 140px;
-    }
+/* Filter panel overlay */
+.filter-panel {
+    display: none;
+    position: fixed;      /* <-- fixed so it floats on top */
+    top: 130px;            /* distance from top of viewport */
+    left: 20%;            /* center horizontally */
+    transform: translateX(-50%);
+    z-index: 9999;        /* on top of footer and everything */
+    min-width: 250px;
+    max-width: 90%;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    padding: 15px;
+    flex-direction: column;
+    gap: 10px;
 }
 
-/* --- Responsive: Mobile Screens --- */
+/* Show dropdown */
+.filter-panel.show {
+    display: flex;
+}
+
+
+/* --- Responsive Mobile ≤425px --- */
 @media (max-width: 425px) {
+    .filter-container {
+        flex-direction: column;
+        gap: 15px;
+        position: relative;
+    }
+
+    .search-add-wrapper {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .search-form {
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+    }
+
+    .search-input,
+    .btn-search,
+    .btn-add-place,
+    .btn-filter {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .search-input,
+    .btn-search,
+    .btn-add-place {
+        padding: 12px;
+        font-size: 14px;
+    }
+
     .filter-form {
         flex-direction: column;
         gap: 6px;
@@ -92,7 +212,7 @@
 
     .filter-form .form-control {
         width: 100% !important;
-        height: 70px; /* keep same height on mobile */
+        height: 70px;
         font-size: 14px;
     }
 
@@ -112,10 +232,63 @@
     .card-img-top {
         height: 120px;
     }
+
+    .filter-panel {
+        top: auto;
+        bottom: 0;
+    }
+}
+
+/* --- Responsive: Tablet / Medium Screens --- */
+/* --- Tablet / Medium Screens Fix --- */
+@media (max-width: 768px) {
+    .filter-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-add-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .search-form {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .btn-search,
+    .btn-add-place,
+    .btn-filter {
+        width: 100%;
+    }
+
+    .btn-add-place {
+        margin-top: 5px;
+    }
+    .filter-dropdown {
+    position: relative; /* anchor for absolute filter panel */
+    z-index: 1;
+}
+
+    /* Make filter panel overlay on tablets too */
+    .filter-panel {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 300px;
+        z-index: 999;
+    }
 }
 
 /* --- Cards on Small Screens --- */
-@media (max-width: 576px) {
+@media (max-width: 426px) {
     .col-6 {
         flex: 0 0 100%;
         max-width: 100%;
@@ -124,5 +297,9 @@
     .col-md-4 {
         flex: 0 0 50%;
         max-width: 50%;
+    }
+
+    .filter-panel{
+    left: 38%;
     }
 }

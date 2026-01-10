@@ -14,6 +14,8 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo.png') }}">
@@ -70,23 +72,41 @@
                     <input type="text" name="search" placeholder="მოძებნეთ ჩანჩქერები, გამოქვაბულები..." value="{{ request.args.get('search','') }}">
                     <select name="region" class="d-none d-sm-block">
                         <option>ყველა რეგიონი</option>
-                        <option>კახეთი</option>
-                        <option>სვანეთი</option>
-                        <option>სამეგრელო</option>
-                        <option>აჭარა</option>
+                        <option disabled>კახეთი</option>
+                        <option disabled>სვანეთი</option>
+                        <option disabled>სამეგრელო</option>
+                        <option disabled>აჭარა</option>
                     </select>
                     <button class="btn btn-primary-green" type="submit">აღმოაჩინე</button>
                 </div>
             </form>
         </div>
 
-        <div class="hero-stats">
-            <div class="stat-item"><p class="stat-number">{{ stats['spots'] }}+</p><p class="stat-label">გამორჩეული ადგილები</p></div>
-            <div class="stat-item"><p class="stat-number">{{ stats['regions'] }}</p><p class="stat-label">რეგიონები</p></div>
-            <div class="stat-item"><p class="stat-number">{{ stats['visitors'] }}+</p><p class="stat-label">საშუალო ვიზიტორები</p></div>
+        <div class="hero-stats-wrapper">
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-number">
+                        <span class="counter" data-target="{{ spots_count }}">0</span>+
+                    </div>
+                    <div class="hero-label">GreenSpots</div>
+                </div>
+
+                <div class="hero-stat">
+                    <div class="hero-number">
+                        <span class="counter" data-target="{{ categories_count }}">0</span>
+                    </div>
+                    <div class="hero-label">კატეგორია</div>
+                </div>
+
+                <div class="hero-stat">
+                    <div class="hero-number">
+                        <span class="counter" data-target="{{ users_count }}">0</span>+
+                    </div>
+                    <div class="hero-label">მომხმარებელი</div>
+                </div>
+            </div>
         </div>
     </div>
-
     <div class="scroll-indicator"><div><span></span></div></div>
 </section>
 
@@ -99,29 +119,24 @@
             <p class="section-description">ჩვენი საზოგადოების მიერ შერჩეული ადგილები. თითოეული ადგილი დადასტურებულია რეალური ვიზიტორების გამოცდილებით.</p>
         </div>
 
-        <div class="row">
-            {% for spot in spots %}
-            <div class="col-md-6 col-lg-3 animate-on-scroll">
-                <article class="spot-card">
-                    <div class="spot-image">
-                        <img src="{{ url_for('static', filename='img/' + spot.image) }}" alt="{{ spot.title }}">
-                        <div class="spot-image-overlay"></div>
-                        <div class="spot-rating"><i class="bi bi-star-fill"></i>{{ spot.rating }}</div>
-                        <div class="spot-location"><i class="bi bi-geo-alt"></i>{{ spot.region }}</div>
-                    </div>
-                    <div class="spot-content">
-                        <h3 class="spot-title">{{ spot.title }}</h3>
-                        <p class="spot-description">{{ spot.description }}</p>
-                        <div class="spot-badges">
-                            {% for badge in spot.badges.split(',') %}
-                            <span class="spot-badge"><i class="bi bi-{{ badge.strip() }}"></i> {{ badge.strip() }}</span>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </article>
+        <div class="spot-carousel">
+          {% for spot in spots %}
+            <div class="spot-card">
+              <img src="{{ url_for('static', filename='uploads/' ~ spot.image) }}" alt="{{ spot.name }}">
+              <h3>{{ spot.name }}</h3>
+              <p>
+                {% if spot.avg_rating %}
+                    {% for i in range(spot.avg_rating|int) %}★{% endfor %}
+                    {% if spot.avg_rating - (spot.avg_rating|int) >= 0.5 %}½{% endif %}
+                    ({{ '%.1f' % spot.avg_rating }})
+                {% else %}
+                    შეფასება არ არის
+                {% endif %}
+              </p>
             </div>
-            {% endfor %}
+          {% endfor %}
         </div>
+    </div>
 
         <div class="text-center mt-4">
             <button class="btn btn-outline-green btn-lg">იხილეთ ყველა</button>
@@ -284,5 +299,69 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Custom JS -->
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+
+{%block js%}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+<script>
+$(document).ready(function(){
+  $('.spot-carousel').slick({
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    infinite: true,
+    arrows: true,
+    dots: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: { slidesToShow: 2 }
+      },
+      {
+        breakpoint: 600,
+        settings: { slidesToShow: 1 }
+      }
+    ]
+  });
+});
+</script>
+
+<script>
+const counters = document.querySelectorAll('.counter');
+let started = false;
+
+function animateCounters() {
+    if (started) return;
+    started = true;
+
+    counters.forEach(counter => {
+        const target = Number(counter.dataset.target);
+        let current = 0;
+
+        const duration = 800; // ms (hero = fast)
+        const startTime = performance.now();
+
+        function update(now) {
+            const progress = Math.min((now - startTime) / duration, 1);
+            current = Math.floor(progress * target);
+            counter.textContent = current;
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            } else {
+                counter.textContent = target;
+            }
+        }
+
+        requestAnimationFrame(update);
+    });
+}
+
+// Hero is visible immediately, so run on load
+window.addEventListener('load', animateCounters);
+</script>
+{%endblock%}
 </body>
 </html>

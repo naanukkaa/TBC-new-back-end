@@ -14,108 +14,135 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo.png') }}">
     <style>
+    .auth-container {
+        display: flex;
+        height: 100vh;
+    }
 
+    /* Left form panel */
+    .auth-left {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 60px;
+        background-color: #f5f5f5;
+    }
+
+    .auth-left h2 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #2b9348;
+    }
+
+    .auth-left p {
+        font-size: 1rem;
+        margin-bottom: 30px;
+        color: #555;
+    }
+
+    .auth-left form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .auth-left .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .auth-left .form-group input {
+        padding: 12px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+
+    .auth-left button {
+        padding: 12px;
+        font-size: 1rem;
+        background-color: #2b9348;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .auth-left button:hover {
+        background-color: #2b9348;
+    }
+
+    .auth-left .auth-switch {
+        margin-top: 15px;
+        font-size: 0.9rem;
+        color: #2c7a7b;
+        text-decoration: none;
+    }
+
+    #password-requirements {
+    list-style: none;
+    padding-left: 0;
+    font-size: 0.85rem;
+    }
+    #password-requirements li.invalid {
+        color: gray;
+    }
+    #password-requirements li.valid {
+        color: green;
+        font-weight: bold;
+    }
+
+    /* Right image panel */
+    .auth-right {
+        flex: 1;
+        background-image: url('{{ url_for('static', filename='img/register.jpg') }}');
+        background-size: cover;
+        background-position: center;
+    }
+
+    @media (max-width: 900px) {
         .auth-container {
-            display: flex;
-            height: 100vh;
-        }
-
-        /* Left form panel */
-        .auth-left {
-            flex: 1;
-            display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 60px;
-            background-color: #f5f5f5;
         }
+        .auth-left, .auth-right {
+            flex: unset;
+            height: 50vh;
+        }
+    }
+    .auth-header {
+        position: absolute;
+        top: 24px;
+        left: 32px;
+        z-index: 10;
+    }
 
-        .auth-left h2 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: #2b9348;
-        }
+    .auth-header .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
 
-        .auth-left p {
-            font-size: 1rem;
-            margin-bottom: 30px;
-            color: #555;
-        }
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 18px;
+        color: #2e7d32; /* match your green */
+    }
 
-        .auth-left form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .auth-left .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .auth-left .form-group input {
-            padding: 12px;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        .auth-left button {
-            padding: 12px;
-            font-size: 1rem;
-            background-color: #2b9348;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .auth-left button:hover {
-            background-color: #2b9348;
-        }
-
-        .auth-left .auth-switch {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #2c7a7b;
-            text-decoration: none;
-        }
-
-        #password-requirements {
-        list-style: none;
-        padding-left: 0;
-        font-size: 0.85rem;
-        }
-        #password-requirements li.invalid {
-            color: gray;
-        }
-        #password-requirements li.valid {
-            color: green;
-            font-weight: bold;
-        }
-
-        /* Right image panel */
-        .auth-right {
-            flex: 1;
-            background-image: url('{{ url_for('static', filename='img/register.jpg') }}');
-            background-size: cover;
-            background-position: center;
-        }
-
-        @media (max-width: 900px) {
-            .auth-container {
-                flex-direction: column;
-            }
-            .auth-left, .auth-right {
-                flex: unset;
-                height: 50vh;
-            }
-        }
-
+    .auth-header img {
+        width: 28px;
+        height: 28px;
+    }
     </style>
 </head>
 <body>
+    <header class="auth-header">
+        <a href="{{ url_for('index') }}" class="brand">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="logo">
+            <span>GreenSpots</span>
+        </a>
+    </header>
 
     <div class="auth-container">
         <div class="auth-left">

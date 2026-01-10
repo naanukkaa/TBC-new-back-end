@@ -42,7 +42,6 @@ REGION_CHOICES = [
     ('Abkhazia', 'აფხაზეთი'),
     ('Samegrelo', 'სამეგრელო'),
     ('Guria', 'გურია'),
-    ('Adjara', 'აჭარა'),
     ('Imereti', 'იმერეთი'),
     ('Kakheti', 'კახეთი'),
     ('Racha-Lechkhumi', 'რაჭა-ლეჩხუმი'),

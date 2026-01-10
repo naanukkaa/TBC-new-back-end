@@ -5,6 +5,7 @@ from forms import PlaceForm
 from auth import auth_bp
 from flask_migrate import Migrate
 from werkzeug.utils import secure_filename
+from sqlalchemy.sql.expression import func
 import os
 from types import SimpleNamespace
 import random
@@ -33,40 +34,26 @@ def load_user(user_id):
 # ---------------- PUBLIC ROUTES ----------------
 @app.route("/")
 def index():
-    spots = [
-        SimpleNamespace(
-            title="მარტვილის კანიონი",
-            description="ზურმუხტისფერი წყლები, რომლებიც უძველეს კირქვის წარმონაქმნებში მოედინება, იდეალურია ნავით გასეირნებისთვის.",
-            region="სამეგრელო",
-            rating=4.9,
-            image="samegrelo.jpg",
-            badges="წყალი, ფოტოგრაფია"
-        ),
-        SimpleNamespace(
-            title="ოკაცეს კანიონი",
-            description="გასაოცარი დაკიდული ბილიკი ღრმა ოკაცეს კანიონზე, საიდანაც შთამბეჭდავი ხედი იშლება.",
-            region="იმერეთი",
-            rating=4.8,
-            image="imereti.jpg",
-            badges="ხედი,ლაშქრობა"
-        ),
-        SimpleNamespace(
-            title="ილიას (ყვარლის) ტბა",
-            description="მშვიდი წყლები, ტყით შემოსაზღვრულ გორებსა და დასასვენებელ პარკს შორის გაშლილი, ილიას (ყვარლის) ტბას იდეალურ ადგილად აქცევს სეირნობისთვის.",
-            region="კახეთი",
-            rating=4.7,
-            image="kaxeti.jpg",
-            badges="პიკნიკი,ლაშქრობა"
-        ),
-        SimpleNamespace(
-            title="შუქურას პალმების ბილიკი",
-            description="პალმებით გაწყობილი ბილიკი, ტბასა და ზღვის სანაპიროს შორის გადაჭიმული, შუქურას სივრცეს აქცევს მშვიდ სეირნობისა და ბუნებაში დასვენების იდეალურ ადგილად.",
-            region="აჭარა",
-            rating=4.6,
-            image="awara.jpg",
-            badges="ეკოტურიზმი,დასვენება"
-        ),
-    ]
+    spots = Place.query.all()  # fetch all places
+
+
+    users_count = User.query.count()
+    spots_count = Place.query.count()
+    categories_count = 8
+
+    for spot in spots:
+        if spot.ratings:
+            spot.avg_rating = round(sum(r.stars for r in spot.ratings)/len(spot.ratings), 1)
+        else:
+            spot.avg_rating = 0
+
+    top_spots = [s for s in spots if s.avg_rating >= 4]
+    random.shuffle(top_spots)
+    top_spots = top_spots[:10]
+
+    if not top_spots:
+        random.shuffle(spots)
+        top_spots = spots[:10]
 
     categories = [
         SimpleNamespace(name="მთები", icon="mountains.svg", count=18),
@@ -80,18 +67,20 @@ def index():
     ]
 
     stats = SimpleNamespace(
-        spots=len(spots),
-        regions=4,
+        spots=len(top_spots),
+        regions=12,
         visitors=1200
     )
 
     return render_template(
         "index.html",
-        spots=spots,
+        spots=top_spots,
         categories=categories,
-        stats=stats
+        stats=stats,
+        users_count=users_count,
+        spots_count=spots_count,
+        categories_count=categories_count
     )
-
 # ---------------- LOGGED-IN ROUTES ----------------
 @app.route("/home")
 @login_required
@@ -102,12 +91,25 @@ def home():
     # Random suggested places, max 10
     suggested_places = random.sample(places, min(10, len(places)))
 
+    for place in suggested_places:
+        if place.ratings:
+            place.avg_rating = round(sum(r.stars for r in place.ratings) / len(place.ratings), 1)
+        else:
+            place.avg_rating = 0
+
     # Favorites — random or just limit first N
     user_favorites = current_user.favorites  # SQLAlchemy relationship
     max_favorites = 6
     if len(user_favorites) > max_favorites:
         # pick random subset of favorites
         favorites_to_show = random.sample(user_favorites, max_favorites)
+
+        for fav in favorites_to_show:
+            if fav.ratings:
+                fav.avg_rating = round(sum(r.stars for r in fav.ratings) / len(fav.ratings), 1)
+            else:
+                fav.avg_rating = 0
+
     else:
         favorites_to_show = user_favorites
 
@@ -174,36 +176,74 @@ def map_page():
     ).all()
     return render_template("map.html", places=places)
 
-
 @app.route("/categories")
 @login_required
 def categories():
     search_query = request.args.get("q", "").strip()
     selected_category = request.args.get("category", "").strip()
+    min_rating = request.args.get("rating", "").strip()
+    selected_region = request.args.get("region", "").strip()
+    favorites_only = request.args.get("favorites_only", "").strip()
 
-    query = Place.query
-    if selected_category and selected_category != "all":
-        query = query.filter(Place.category == selected_category)
-    elif search_query:
-        query = query.filter(Place.name.ilike(f"%{search_query}%"))
-
-    places = query.all()
-
-    category_map = {
-        'mountains': 'მთები',
-        'waterfalls': 'ჩანჩქერები/კანიონები',
-        'historic': 'ისტორიული',
-        'forests': 'ტყეები',
-        'views': 'ხედები',
-        'hiking': 'ლაშქრობა',
-        'lakes': 'ტბები',
-        'sunrise': 'მზის ამოსვლა'
+    region_map = {
+        "Tbilisi": "თბილისი",
+        "Adjara": "აჭარა",
+        "Abkhazia": "აფხაზეთი",
+        "Samegrelo": "სამეგრელო",
+        "Guria": "გურია",
+        "Imereti": "იმერეთი",
+        "Kakheti": "კახეთი",
+        "Racha-Lechkhumi": "რაჭა-ლეჩხუმი",
+        "Mtskheta-Mtianeti": "მცხეთა-მთიანეთი",
+        "Samtskhe-Javakheti": "სამცხე-ჯავახეთი",
+        "Svaneti": "სვანეთი",
+        "Shida Kartli": "შიდა ქართლი",
+        "Kvemo Kartli": "ქვემო ქართლი"
     }
+
+    places = Place.query.all()
+    filtered = []
+
+    for place in places:
+        avg = round(sum(r.stars for r in place.ratings)/len(place.ratings), 1) if place.ratings else 0
+        place.avg_rating = avg
+
+        # Rating filter
+        if min_rating:
+            if avg < float(min_rating):
+                continue
+
+        # Category filter
+        if selected_category and place.category != selected_category:
+            continue
+
+        # Region filter
+        if selected_region and place.region != selected_region:
+            continue
+
+        # Favorites filter
+        if favorites_only == "on" and place.id not in [p.id for p in current_user.favorites]:
+            continue
+
+        # Search filter
+        if search_query and search_query.lower() not in place.name.lower():
+            continue
+
+        filtered.append(place)
+
+    categories_list = [c[0] for c in db.session.query(Place.category).distinct()]
+    regions_list = [(code, name) for code, name in region_map.items() if any(p.region == code for p in places)]
 
     return render_template(
         "categories.html",
-        places=places,
-        category_map=category_map
+        places=filtered,
+        categories_list=categories_list,
+        regions_list=regions_list,
+        selected_category=selected_category,
+        min_rating=min_rating,
+        selected_region=selected_region,
+        favorites_only=favorites_only,
+        search_query=search_query
     )
 
 @app.route("/add-place", methods=["GET", "POST"])
@@ -353,7 +393,7 @@ def booking():
         db.session.commit()
 
         flash("თქვენი შეკვეთა წარმატებით გაიგზავნა!", "success")
-        return redirect(url_for('profile'))  # redirect to profile so it appears in Planned Routes
+        return redirect(url_for('profile'))
 
     return render_template("booking.html", spots=spots)
 

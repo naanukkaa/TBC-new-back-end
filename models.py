@@ -55,8 +55,9 @@ class Place(db.Model):
     category = db.Column(db.String(50), nullable=False)
     region = db.Column(db.String(50))
     image = db.Column(db.String(200))
-    latitude = db.Column(db.Float, nullable=True)  # make nullable
-    longitude = db.Column(db.Float, nullable=True)  # make nullable
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    rating = db.Column(db.Float)
 
     ratings = db.relationship('Rating', backref='place', lazy=True)
 
