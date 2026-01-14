@@ -86,6 +86,20 @@
         </div>
     </div>
 </section>
+
+<section class="py-5">
+    <div class="container text-center">
+        <hr class="my-4">
+        <h4 class="text-danger">საშიში ზონა</h4>
+        <form action="{{ url_for('auth_bp.delete_account') }}" method="POST"
+              onsubmit="return confirm('This will permanently delete your account. Are you sure?');">
+            <button type="submit" class="btn btn-danger">
+                Delete My Account
+            </button>
+        </form>
+    </div>
+</section>
+
 {% endblock %}
 
 {% block js %}

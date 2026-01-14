@@ -28,7 +28,15 @@
                         <option value="{{ code }}" {% if selected_region == code %}selected{% endif %}>{{ name }}</option>
                         {% endfor %}
                     </select>
-
+                    <select name="category" class="filter-item">
+                        <option value="">ყველა კატეგორია</option>
+                        {% for category in categories_list %}
+                            <option value="{{ category }}"
+                                {% if selected_category == category %}selected{% endif %}>
+                                {{ category }}
+                            </option>
+                        {% endfor %}
+                    </select>
                     <select name="rating" class="filter-item">
                         <option value="">ყველა შეფასება</option>
                         <option value="5" {% if min_rating == '5' %}selected{% endif %}>5 ვარსკვლავი</option>

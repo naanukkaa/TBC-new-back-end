@@ -34,7 +34,6 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def calculate_avg_rating(self):
-        """Returns the average rating of the user's favorites (or any criteria)"""
         if not self.favorites:
             return 0
         total = sum(place.rating for place in self.favorites if hasattr(place, 'rating'))
@@ -89,14 +88,14 @@ class Spot(db.Model):
     region = db.Column(db.String(50), nullable=False)
     rating = db.Column(db.Float, nullable=False)
     image = db.Column(db.String(150), nullable=False)
-    badges = db.Column(db.String(150))  # comma-separated
+    badges = db.Column(db.String(150))
     lat = db.Column(db.Float)
     lng = db.Column(db.Float)
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    icon = db.Column(db.String(50)) # icon name or image path
+    icon = db.Column(db.String(50))
     count = db.Column(db.Integer)
 
 
@@ -106,5 +105,5 @@ class PlannedRoute(db.Model):
     place_id = db.Column(db.Integer, db.ForeignKey('place.id'))
     date = db.Column(db.Date, nullable=False)
 
-    user = db.relationship('User', backref='routes')  # <-- renamed from planned_routes to 'routes'
+    user = db.relationship('User', backref='routes')
     place = db.relationship('Place', backref='planned_routes')

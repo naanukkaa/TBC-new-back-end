@@ -12,6 +12,7 @@ def register():
         return redirect(url_for('home'))
 
     form = RegistrationForm()
+
     if form.validate_on_submit():
         existing_user = User.query.filter(
             (User.username == form.username.data) | (User.email == form.email.data)
@@ -26,6 +27,12 @@ def register():
         db.session.commit()
         flash('Registration successful! You can now log in.', 'success')
         return redirect(url_for('auth_bp.login'))
+
+    # ---- FLASH FORM ERRORS ----
+    # This will flash the email domain error or any other validation error
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(error, 'danger')
 
     return render_template('register.html', form=form)
 
@@ -56,3 +63,20 @@ def logout():
     logout_user()
     flash('Logged out successfully.', 'success')
     return redirect(url_for('auth_bp.login'))
+
+
+# ------------------- Delete Account -------------------
+@auth_bp.route('/delete-account', methods=['POST'])
+@login_required
+def delete_account():
+    user = current_user
+
+    # logout FIRST (important)
+    logout_user()
+
+    # delete user
+    db.session.delete(user)
+    db.session.commit()
+
+    flash('Your account has been permanently deleted.', 'info')
+    return redirect(url_for('index'))

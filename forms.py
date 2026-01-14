@@ -1,27 +1,38 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import (
-    StringField,
-    PasswordField,
-    SubmitField,
-    TextAreaField,
-    FloatField,
-    SelectField
-)
+from wtforms import (StringField, PasswordField, SubmitField, TextAreaField, FloatField, SelectField)
 from wtforms.validators import DataRequired, Email, Length
 from wtforms import StringField, PasswordField, SubmitField, EmailField, SelectField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
+ALLOWED_EMAIL_DOMAINS = {
+    "gmail.com",
+    "outlook.com",
+    "hotmail.com",
+    "yahoo.com",
+    "icloud.com",
+    "proton.me",
+    "protonmail.com"
+}
+
+
+def validate_email_domain(form, field):
+    email = field.data.lower()
+    domain = email.split("@")[-1]
+    if domain not in ALLOWED_EMAIL_DOMAINS:
+        raise ValidationError(
+            "Please use a real email provider (Gmail, Outlook, Yahoo, iCloud, Proton)."
+        )
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email(message="Invalid email format"), validate_email_domain])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[DataRequired(), Email(message="invalid email address")])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
@@ -60,3 +71,4 @@ class PlaceForm(FlaskForm):
     region = SelectField("რეგიონი", choices=REGION_CHOICES)
     image = FileField("ატვირთე ფოტო", validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'მხოლოდ ფოტო!')])
     submit = SubmitField("დაამატე ადგილი")
+

@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 from sqlalchemy.sql.expression import func
 import os
 from types import SimpleNamespace
+from flask_wtf import CSRFProtect
 import random
 
 
@@ -21,6 +22,7 @@ app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
 app.register_blueprint(auth_bp)
 db.init_app(app)
 migrate = Migrate(app, db)
+csrf = CSRFProtect(app)
 
 # ---------------- LOGIN MANAGER ----------------
 login_manager = LoginManager()
@@ -34,7 +36,7 @@ def load_user(user_id):
 # ---------------- PUBLIC ROUTES ----------------
 @app.route("/")
 def index():
-    spots = Place.query.all()  # fetch all places
+    spots = Place.query.all()
 
 
     users_count = User.query.count()
@@ -85,10 +87,8 @@ def index():
 @app.route("/home")
 @login_required
 def home():
-    # All places for reference
     places = Place.query.all()
 
-    # Random suggested places, max 10
     suggested_places = random.sample(places, min(10, len(places)))
 
     for place in suggested_places:
@@ -97,11 +97,9 @@ def home():
         else:
             place.avg_rating = 0
 
-    # Favorites — random or just limit first N
-    user_favorites = current_user.favorites  # SQLAlchemy relationship
+    user_favorites = current_user.favorites
     max_favorites = 6
     if len(user_favorites) > max_favorites:
-        # pick random subset of favorites
         favorites_to_show = random.sample(user_favorites, max_favorites)
 
         for fav in favorites_to_show:
@@ -113,7 +111,6 @@ def home():
     else:
         favorites_to_show = user_favorites
 
-    # List of favorite IDs for your heart buttons
     user_favorite_ids = [p.id for p in current_user.favorites]
 
     planned_count = PlannedRoute.query.filter_by(user_id=current_user.id).count()
@@ -122,7 +119,7 @@ def home():
         "home.html",
         places=places,
         suggested_places=suggested_places,
-        favorites_to_show=favorites_to_show,  # pass limited favorites
+        favorites_to_show=favorites_to_show,
         user_favorite_ids=user_favorite_ids,
         planned_count=planned_count
     )
@@ -145,7 +142,6 @@ def profile():
 def delete_route(route_id):
     route = PlannedRoute.query.get_or_404(route_id)
 
-    # security check: users can delete ONLY their own routes
     if route.user_id != current_user.id and not current_user.is_admin:
         abort(403)
 
@@ -262,7 +258,7 @@ def add_place():
         latitude = request.form.get("latitude")
         longitude = request.form.get("longitude")
 
-        print("LAT:", latitude, "LNG:", longitude)  # debug line
+        print("LAT:", latitude, "LNG:", longitude)
 
         if not latitude or not longitude:
             flash("გთხოვ აირჩიე ადგილი რუკაზე", "danger")
@@ -292,7 +288,6 @@ def add_place():
 def delete_rating(rating_id):
     rating = Rating.query.get_or_404(rating_id)
 
-    # Only author or admin
     if rating.user_id != current_user.id and not current_user.is_admin:
         return jsonify({'status': 'error', 'message': 'Unauthorized'}), 403
 
@@ -366,9 +361,9 @@ def toggle_favorite(place_id):
 
 
 @app.route('/booking', methods=['GET', 'POST'])
-@login_required  # must be logged in to book
+@login_required
 def booking():
-    spots = Place.query.all()  # fetch all spots for the select dropdown
+    spots = Place.query.all()
 
     if request.method == 'POST':
         spot_name = request.form['spot']
@@ -387,7 +382,7 @@ def booking():
         new_route = PlannedRoute(
             user_id=current_user.id,
             place_id=spot.id,
-            date=datetime.strptime(date_selected, "%Y-%m-%d")  # make sure the date is correct
+            date=datetime.strptime(date_selected, "%Y-%m-%d")
         )
         db.session.add(new_route)
         db.session.commit()
@@ -405,8 +400,6 @@ def contact():
         email = request.form["email"]
         subject = request.form["subject"]
         message = request.form["message"]
-
-        # TODO: save to DB or send email
 
         flash("შეტყობინება გაგზავნილია!", "success")
         return redirect(url_for("contact"))
